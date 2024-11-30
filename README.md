@@ -43,8 +43,8 @@ This project aims to develop a language model that can answer medical questions,
 Clone the repository to your local machine using:
 
 ```bash
-git clone https://github.com/footcricket05/medicalQA.git
-cd medicalQA
+git clone https://github.com/footcricket05/medical-QA.git
+cd medical-QA
 ```
 
 ### 2. Install Backend Dependencies
