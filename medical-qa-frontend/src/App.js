@@ -2,10 +2,13 @@ import React, { useState } from "react";
 import axios from "axios";
 import "./App.css"; // Include CSS for styling
 
+// Centralized API Endpoint
+const API_BASE_URL = "https://d7ca-2406-7400-56-aa49-3868-8830-70ab-6dda.ngrok-free.app/answer"; // Update this with your ngrok or server URL
+
 function App() {
   const [question, setQuestion] = useState("");
   const [loading, setLoading] = useState(false);
-  const [messages, setMessages] = useState([]);  // Store chat messages
+  const [messages, setMessages] = useState([]); // Store chat messages
 
   const handleInputChange = (event) => {
     setQuestion(event.target.value);
@@ -16,51 +19,52 @@ function App() {
       setLoading(true);
       setMessages((prevMessages) => [
         ...prevMessages,
-        { text: question, sender: "user" }
-      ]);  // Append user message
+        { text: question, sender: "user" },
+      ]); // Append user message
 
       try {
         const res = await axios.post(
-          "http://127.0.0.1:8000/answer",  // API endpoint
+          API_BASE_URL,
           { question },
           { headers: { "Content-Type": "application/json" } }
         );
 
-        // Ensure you handle both the specialty and answer fields
         const { specialty, answer } = res.data;
 
+        // Validate response fields
         if (!specialty || !answer) {
           setMessages((prevMessages) => [
             ...prevMessages,
-            { text: "Sorry, I couldn't get a valid response.", sender: "bot" }
+            { text: "Sorry, I couldn't get a valid response. Please try again.", sender: "bot" },
           ]);
           return;
         }
 
-        // Update response with the full answer
+        // Append bot response
         const fullResponse = `Specialty: ${specialty}\n\nAnswer: ${answer}`;
-
-        // Append bot response to chat
         setMessages((prevMessages) => [
           ...prevMessages,
-          { text: fullResponse, sender: "bot" }
+          { text: fullResponse, sender: "bot" },
         ]);
       } catch (error) {
-        console.error("Error fetching answer", error);
+        console.error("Error fetching answer:", error);
         setMessages((prevMessages) => [
           ...prevMessages,
-          { text: "Error fetching answer", sender: "bot" }
+          {
+            text: "There was an error fetching the answer. Please check your connection or try again later.",
+            sender: "bot",
+          },
         ]);
       } finally {
         setLoading(false);
-        setQuestion("");  // Clear input after submission
+        setQuestion(""); // Clear input after submission
       }
     }
   };
 
   const handleNewChat = () => {
-    setMessages([]);  // Clear all messages
-    setQuestion("");   // Clear input field
+    setMessages([]); // Clear all messages
+    setQuestion(""); // Clear input field
   };
 
   return (
