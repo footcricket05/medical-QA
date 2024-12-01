@@ -108,7 +108,7 @@ To access the backend from a public device (like a mobile phone):
    ```bash
    ngrok http 8000
    ```
-2. Use the public URL provided by `ngrok` to replace the backend URL in the frontend (`medical-qa-frontend/src/config.js`).
+2. Use the public URL provided by `ngrok` to replace the backend URL in the frontend (`medical-qa-frontend/src/App.js`).
 
 ---
 
