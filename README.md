@@ -1,240 +1,221 @@
 # Medical QA Project
 
-This project involves developing, training, and deploying a small language model (SLM) capable of answering medical questions asked by end-users. The model provides informative, grounded answers while ensuring ethical compliance in its responses. The project includes both backend (FastAPI-based API) and frontend (React-based web app) components.
+This project is a **Medical Question Answering System**, designed to provide users with **informative and ethical responses** to medical questions. It includes both a **backend** (FastAPI-based API) and a **frontend** (ReactJS-based web application) for a seamless user experience.
 
 ---
 
 ## Features
 
-- **Medical Question Answering:** The model answers medical questions related to symptoms, causes, home remedies, lifestyle changes, and recommendations for medical specialties.
-- **Ethical Compliance:** The model adheres to ethical guidelines, never prescribing medications or treatments and always advising users to consult a healthcare professional.
-- **Local Deployment:** The backend API is optimized to run on standard hardware without requiring GPUs for real-time inference.
-- **Frontend Interface:** A simple, user-friendly chatbot interface hosted on Netlify for interacting with the backend API.
+- **Medical Expertise Simulation**:
+  - Classifies medical questions into relevant specialties.
+  - Generates grounded answers based on symptoms, lifestyle, and suggested remedies.
+- **Ethical Compliance**:
+  - Does not prescribe medications or treatments.
+  - Encourages consulting healthcare professionals for medical advice.
+- **Easy Deployment**:
+  - Backend API and frontend are containerized using **Docker**.
+  - Fully orchestrated with **Docker Compose** for seamless deployment.
+- **Frontend Hosting**:
+  - The frontend is hosted on **Netlify**, enabling easy access to users.
+- **Local Deployment**:
+  - Backend runs efficiently on standard hardware, with no need for GPUs.
 
 ---
 
-## Project Overview
+## Project Structure
 
-This project aims to develop a language model that can answer medical questions, providing informative and grounded responses. The backend of the application uses **FastAPI** to handle HTTP requests, and the frontend is a **React**-based application hosted on **Netlify**. The model was trained using an open-source base model (e.g., GPT-2) and fine-tuned to answer medical questions while ensuring that no harmful or unethical medical advice is provided.
+```plaintext
+medical-QA/
+├── docker-compose.yml                 # Orchestrates backend and frontend services
+├── Dockerfile.backend                 # Dockerfile for the backend
+├── Dockerfile.frontend                # Dockerfile for the frontend
+├── label_encoder.pkl                  # Pre-trained label encoder for specialties
+├── LICENSE                            # Project license file
+├── ngrok.exe                          # Utility for exposing local services
+├── Problem Statement 2 - Medical SLM.pdf  # Problem statement document
+├── SECURITY.md                        # Security policy for the project
+├── README.md                          # Project documentation (this file)
+├── src/                               # Backend source folder
+│   ├── app/                           # FastAPI application
+│   ├── requirements.txt               # Backend dependencies
+│   └── model/                         # Trained models and utilities
+├── medical-qa-frontend/               # Frontend React app
+│   ├── src/                           # React app source files
+│   ├── public/                        # Static files for the React app
+│   └── package.json                   # Frontend dependencies
+├── model/                             # Model training and fine-tuning scripts
+│   └── model.safetensors              # Trained model file (download separately)
+├── data/                              # Dataset for training and testing
+└── README.md                          # This documentation file
+```
 
 ---
 
-## Tech Stack
+## Prerequisites
 
-- **Backend:** 
-  - **FastAPI** for building the API.
-  - **Hugging Face Transformers** for model implementation.
-  - **PyTorch** for model training and inference.
+Before running this project, ensure you have the following installed:
 
-- **Frontend:**
-  - **ReactJS** for building the web interface.
-  - **Netlify** for hosting the frontend.
-
-- **Other Libraries:**
-  - **torch**, **pickle**, **uvicorn** for backend API deployment.
-  - **serve** for serving the frontend locally.
+1. **Docker**: For containerizing and running the backend and frontend.
+2. **Docker Compose**: To orchestrate multi-container applications.
+3. **ngrok** (optional): For exposing local backend to the internet during testing.
+4. **Node.js** (v16 or above): For frontend development.
 
 ---
 
 ## Setup and Installation
 
-### 1. Clone the repository
-
-Clone the repository to your local machine using:
+### 1. Clone the Repository
 
 ```bash
 git clone https://github.com/footcricket05/medical-QA.git
 cd medical-QA
 ```
 
-### 2. Install Backend Dependencies
+### 2. Download the Trained Model
 
-Navigate to the backend folder and install the required dependencies:
+The `model.safetensors` file is not included in this repository due to its size. Download the trained model file from [Google Drive](https://drive.google.com/drive/folders/1PgTasOUeE2AMugYG7zI1h7sygAOvfMRv?usp=sharing).
+
+1. Download the file from the provided Google Drive link.
+2. Save the `model.safetensors` file in the `model` folder:
+   ```plaintext
+   medical-QA/
+   └── model/
+       └── model.safetensors
+   ```
+
+---
+
+### Dockerized Setup
+
+#### 1. Build and Start the Project
+
+Use Docker Compose to build and run both backend and frontend services:
 
 ```bash
-cd src
-pip install -r requirements.txt
+docker-compose up --build
 ```
 
-### 3. Install Frontend Dependencies
-
-Navigate to the frontend folder and install the required dependencies:
-
-```bash
-cd medical-qa-frontend
-npm install
-```
+- The **backend** will be available at `http://localhost:8000`.
+- The **frontend** will be available at `http://localhost:3000`.
 
 ---
 
-## Running the Backend Locally
+#### 2. Expose Backend Locally (Optional)
 
-To run the backend locally, follow these steps:
+To access the backend from a public device (like a mobile phone):
 
-1. **Activate the virtual environment** (if not already activated):
-
-```bash
-source venv/bin/activate  # On macOS/Linux
-venv\Scripts\activate     # On Windows
-```
-
-2. **Start the FastAPI server:**
-
-```bash
-uvicorn src.app.combined_api:app --host=0.0.0.0 --port=8000 --reload
-```
-
-This will start the backend server on `http://127.0.0.1:8000`.
-
-3. **Serve the frontend locally:**
-
-Navigate to the frontend folder and run:
-
-```bash
-serve -s build
-```
-
-The frontend will be accessible at `http://localhost:3000`.
+1. Start `ngrok`:
+   ```bash
+   ngrok http 8000
+   ```
+2. Use the public URL provided by `ngrok` to replace the backend URL in the frontend (`medical-qa-frontend/src/config.js`).
 
 ---
 
-## Frontend Hosting on Netlify
+### Manual Setup
 
-1. Build the frontend:
+If you prefer running the project without Docker:
 
-```bash
-npm run build
-```
+#### 1. Backend Setup
 
-2. Install **Netlify CLI** if you don't have it already:
+1. Navigate to the `src/` folder:
+   ```bash
+   cd src
+   ```
+2. Install dependencies:
+   ```bash
+   pip install -r requirements.txt
+   ```
+3. Start the FastAPI server:
+   ```bash
+   uvicorn app.combined_api:app --host 0.0.0.0 --port 8000 --reload
+   ```
 
-```bash
-npm install -g netlify-cli
-```
+#### 2. Frontend Setup
 
-3. Login to Netlify:
-
-```bash
-netlify login
-```
-
-4. Link your project to Netlify:
-
-```bash
-netlify init
-```
-
-5. Deploy the site:
-
-```bash
-netlify deploy --prod
-```
-
-Follow the prompts to complete the deployment. Your frontend will be accessible at a public Netlify URL.
-
----
-
-## Model Development
-
-The model for answering medical questions was developed using an open-source base model from **Hugging Face Transformers**. A **classification model** is used to predict the medical specialty based on the question, and a **generation model (GPT-2)** is used to generate detailed, grounded answers.
+1. Navigate to the frontend folder:
+   ```bash
+   cd medical-qa-frontend
+   ```
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
+3. Start the frontend locally:
+   ```bash
+   npm start
+   ```
 
 ---
 
-## Data Preparation
+## Deployment
 
-The medical question dataset used for training was sourced from public domain resources. Data preprocessing involved:
+### Frontend Hosting on Netlify
 
-- **Cleaning** and formatting the text to remove unnecessary noise.
-- **Handling imbalances** in question categories by ensuring an even distribution of medical specialties.
-- **Splitting the data** into training, validation, and test sets.
-
----
-
-## Training and Fine-Tuning
-
-We used the **GPT-2 model** as a base for the question-answering task. The model was fine-tuned on the medical question dataset using **PyTorch**.
-
-Training involved the following steps:
-
-1. **Tokenizing the text** using the GPT-2 tokenizer.
-2. **Fine-tuning the model** for a few epochs on a subset of the medical dataset.
-3. Evaluating model performance on a separate validation set.
+1. Build the React app:
+   ```bash
+   npm run build
+   ```
+2. Deploy using the **Netlify CLI**:
+   ```bash
+   npm install -g netlify-cli
+   netlify deploy --prod
+   ```
 
 ---
 
-## Ethical Compliance
+## API Documentation
 
-Ethical compliance is a critical part of this project. The model:
+### Base URL
 
-- Does not prescribe medications or specific treatments.
-- Always advises users to **consult a healthcare professional**.
-- Focuses on explaining symptoms, suggesting lifestyle changes, and recommending appropriate medical specialties.
+The backend is served at `http://localhost:8000`.
 
----
+### Endpoints
 
-## Evaluation and Results
-
-The model’s performance was evaluated based on the following metrics:
-
-- **Accuracy:** Correctness of the predicted specialty.
-- **Relevance:** Appropriateness of the generated answer.
-- **Ethical Compliance:** Ensuring the model doesn’t provide specific medical advice.
-
----
-
-## Challenges and Solutions
-
-### Challenge 1: Data Imbalance
-Solution: We used data augmentation techniques and class balancing strategies during preprocessing to address this.
-
-### Challenge 2: Ethical Compliance
-Solution: We fine-tuned the model with constraints in the prompt to ensure responses were grounded in safety and avoided harmful medical advice.
-
----
-
-## License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
----
-
-### Documentation (For Backend API)
-
----
-
-# Medical QA Backend API Documentation
-
-## Introduction
-
-The backend API is a **FastAPI** server that handles medical questions, classifies them into medical specialties, and generates relevant answers using **GPT-2**. The API is designed for local deployment on standard hardware without GPUs.
-
----
-
-## Endpoints
-
-### 1. `/`
-- **Method:** `GET`
-- **Description:** A health check endpoint to verify the API is working.
-- **Response:**
+#### 1. `/`
+- **Method**: `GET`
+- **Response**:
   ```json
   {
     "message": "Welcome to Medical QA API"
   }
   ```
 
-### 2. `/answer`
-- **Method:** `POST`
-- **Description:** Takes a medical question and returns a recommended medical specialty and a detailed answer.
-- **Request:**
+#### 2. `/answer`
+- **Method**: `POST`
+- **Request**:
   ```json
   {
     "question": "What should I do if I have a headache?"
   }
   ```
-- **Response:**
+- **Response**:
   ```json
   {
     "specialty": "Neurology",
-    "answer": "Based on your symptoms, you may be dealing with a tension headache. Some home remedies you can try include resting in a quiet, dark room and using a cold compress on your forehead. If the pain persists or worsens, consider consulting a neurologist."
+    "answer": "Based on your symptoms, you may be dealing with a tension headache. Some home remedies include resting and using a cold compress. Consider consulting a neurologist."
   }
   ```
+
+---
+
+## Ethical Compliance
+
+- **Does Not Prescribe Medication**: The model avoids providing specific treatments or drugs.
+- **Promotes Professional Advice**: Encourages users to consult healthcare professionals.
+- **Safe Responses**: Responses are constrained to be ethical, grounded, and non-harmful.
+
+---
+
+## Security Policy
+
+Refer to the [SECURITY.md](SECURITY.md) file for the security policy, which includes:
+- Responsible disclosure guidelines for vulnerabilities.
+- Contact information for reporting security concerns.
+
+---
+
+## License
+
+This project is licensed under the [MIT License](LICENSE).
+

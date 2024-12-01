@@ -1,0 +1,25 @@
+# Frontend Dockerfile
+
+# Use Node.js as a parent image
+FROM node:16
+
+# Set the working directory
+WORKDIR /app
+
+# Copy the frontend files to the container
+COPY medical-qa-frontend /app
+
+# Install dependencies
+RUN npm install
+
+# Build the React app
+RUN npm run build
+
+# Serve the app using serve
+RUN npm install -g serve
+
+# Expose port 3000 for the frontend
+EXPOSE 3000
+
+# Command to run the frontend
+CMD ["serve", "-s", "build"]
